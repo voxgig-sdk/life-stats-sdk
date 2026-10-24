@@ -1,0 +1,60 @@
+{
+  "existing": {
+    "milestone": {
+      "MILESTONE00": {
+        "age": 90,
+        "certificate": "s5b",
+        "date": "s5c",
+        "days_until": 93,
+        "estimate": true,
+        "id": "MILESTONE00",
+        "name": "s60",
+        "passed": false,
+        "planet": "s62"
+      },
+      "MILESTONE01": {
+        "age": 180,
+        "certificate": "sb5",
+        "date": "sb6",
+        "days_until": 183,
+        "estimate": true,
+        "id": "MILESTONE01",
+        "name": "sba",
+        "passed": false,
+        "planet": "sbc"
+      },
+      "MILESTONE02": {
+        "age": 270,
+        "certificate": "s10f",
+        "date": "s110",
+        "days_until": 273,
+        "estimate": true,
+        "id": "MILESTONE02",
+        "name": "s114",
+        "passed": false,
+        "planet": "s116"
+      }
+    }
+  },
+  "new": {
+    "milestone": {
+      "milestone_ref01": {
+        "age": 360,
+        "certificate": "s169",
+        "date": "s16a",
+        "days_until": 363,
+        "estimate": true,
+        "name": "s16e",
+        "passed": false,
+        "planet": "s170"
+      }
+    }
+  },
+  "requests": {
+    "GET /life/milestones": {
+      "provenance": "operation-contract",
+      "version": 2,
+      "source": "openapi3"
+    }
+  }
+}

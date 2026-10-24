@@ -1,0 +1,156 @@
+# Entity: milestone
+
+main: kit: entity: milestone: {
+
+  alias: field: {}
+
+  fields: {
+    age: {
+      h: "Age"
+      n: "age"
+      r: false
+      sh: "The whole-number age on that planet, for planet-birthday milestones only."
+      t: "`$INTEGER`"
+    }
+    certificate: {
+      h: "Certificate"
+      n: "certificate"
+      r: true
+      sh: "Link to an SVG certificate for this milestone (format=png for PNG)."
+      t: "`$STRING`"
+    }
+    date: {
+      fo: "date"
+      h: "Date"
+      n: "date"
+      r: true
+      sh: "Date of the milestone in the caller's time zone."
+      t: "`$STRING`"
+    }
+    days_until: {
+      h: "Days Until"
+      n: "days_until"
+      r: true
+      sh: "Days from today to the milestone (negative once passed)."
+      t: "`$INTEGER`"
+    }
+    estimate: {
+      h: "Estimate"
+      n: "estimate"
+      r: true
+      sh: "True for estimated milestones (billion-heartbeats, at a steady 75 beats a minute)."
+      t: "`$BOOLEAN`"
+    }
+    id: {
+      h: "Id"
+      n: "id"
+      r: true
+      sh: "Milestone id, as the certificate endpoint takes it: gigasecond, 2-gigaseconds, 3-gigaseconds, 10000-days ..."
+      t: "`$STRING`"
+    }
+    name: {
+      h: "Name"
+      n: "name"
+      r: true
+      sh: "Milestone name."
+      t: "`$STRING`"
+    }
+    passed: {
+      h: "Passed"
+      n: "passed"
+      r: true
+      sh: "Whether the milestone is already behind."
+      t: "`$BOOLEAN`"
+    }
+    planet: {
+      h: "Planet"
+      n: "planet"
+      r: false
+      sh: "The planet, for planet-birthday milestones only."
+      t: "`$STRING`"
+    }
+  }
+
+  id: {
+    field: "id"
+    name: "id"
+  }
+
+  name: "milestone"
+  op: {
+    list: {
+      name: "list"
+      points: [
+        {
+          co: {
+            id: "GET /life/milestones"
+            source: "openapi3"
+            version: 2
+          }
+          g: {
+            query: [
+              {
+                ex: "1994-03-12"
+                k: "query"
+                n: "born"
+                or: "born"
+                r: true
+                t: "`$STRING`"
+              }
+              {
+                ex: 5
+                k: "query"
+                n: "count"
+                or: "count"
+                r: false
+                t: "`$INTEGER`"
+              }
+              {
+                ex: "07:45"
+                k: "query"
+                n: "time"
+                or: "time"
+                r: false
+                t: "`$STRING`"
+              }
+              {
+                ex: "America/New_York"
+                k: "query"
+                n: "tz"
+                or: "tz"
+                r: false
+                t: "`$STRING`"
+              }
+            ]
+          }
+          m: "GET"
+          o: "/life/milestones"
+          q: {
+            exist: [
+              "born"
+            ]
+          }
+          rs: {
+            kind: "json"
+            media: "application/json"
+          }
+          s: [
+            {
+              lit: "life"
+            }
+            {
+              lit: "milestones"
+            }
+          ]
+          t: {
+            req: "`reqdata`"
+            res: "`body.data`"
+          }
+        }
+      ]
+    }
+  }
+
+
+
+}

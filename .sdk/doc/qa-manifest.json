@@ -1,0 +1,20 @@
+{
+  "files": [
+    "SUMMARY.md"
+  ],
+  "config": ".sdk/doc/qa/vale.ini",
+  "routes": {},
+  "quoted": {
+    "SUMMARY.md": [
+      "> Playful statistics of a life from a birth date, from the `api.tasta.space` hub: seconds lived (leap seconds included), full moons seen, age on every planet, kilometres travelled around the Sun and the galaxy, estimated heartbeats and breaths, and the milestones still ahead (gigaseconds, 10,000-day birthdays, planet birthdays). GET only, JSON in a &#123;&quot;data&quot;: ..., &quot;meta&quot;: ...&#125; envelope, no key needed (anonymous callers get 30 requests a minute and 1,000 a day per IP, shared across every API on the hub). The API says it stores nothing: the date is used for the request and forgotten.\n>\n> Sources: the documentation page https://api.tasta.space/life and the hub rules at https://api.tasta.space/docs, with both JSON endpoints probed live on 2026-10-23 (born only; born + time + tz; milestones with count=5 and the default 10; a future birth date giving 422).\n>\n> Not modelled: format=text on /life (one plain-text line) and /life/certificate, which returns an SVG or PNG certificate rather than JSON. All numbers are counted at request time, so they change from one call to the next.",
+      "Date of the milestone in the caller&#39;s time zone.",
+      "Days from today to the milestone (negative once passed).",
+      "Life statistics for one birth date, counted as of the moment of the request.",
+      "Link to an SVG certificate for this milestone (format=png for PNG). Not a JSON endpoint.",
+      "The milestones",
+      "The stats",
+      "The whole-number age on that planet, for planet-birthday milestones only.",
+      "True for estimated milestones (billion-heartbeats, at a steady 75 beats a minute)."
+    ]
+  }
+}

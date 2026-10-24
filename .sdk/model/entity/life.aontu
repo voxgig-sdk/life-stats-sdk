@@ -1,0 +1,89 @@
+# Entity: life
+
+main: kit: entity: life: {
+
+  alias: field: {}
+
+  fields: {
+    data: {
+      h: "Data"
+      n: "data"
+      r: true
+      sh: "Life statistics for one birth date, counted as of the moment of the request."
+      t: "`$OBJECT`"
+    }
+    meta: {
+      h: "Meta"
+      n: "meta"
+      r: true
+      t: "`$OBJECT`"
+    }
+  }
+
+  name: "life"
+  op: {
+    load: {
+      name: "load"
+      points: [
+        {
+          co: {
+            id: "GET /life"
+            source: "openapi3"
+            version: 2
+          }
+          g: {
+            query: [
+              {
+                ex: "1994-03-12"
+                k: "query"
+                n: "born"
+                or: "born"
+                r: true
+                t: "`$STRING`"
+              }
+              {
+                ex: "07:45"
+                k: "query"
+                n: "time"
+                or: "time"
+                r: false
+                t: "`$STRING`"
+              }
+              {
+                ex: "America/New_York"
+                k: "query"
+                n: "tz"
+                or: "tz"
+                r: false
+                t: "`$STRING`"
+              }
+            ]
+          }
+          m: "GET"
+          o: "/life"
+          q: {
+            exist: [
+              "born"
+            ]
+          }
+          rs: {
+            kind: "json"
+            media: "application/json"
+          }
+          s: [
+            {
+              lit: "life"
+            }
+          ]
+          t: {
+            req: "`reqdata`"
+            res: "`body`"
+          }
+        }
+      ]
+    }
+  }
+
+
+
+}

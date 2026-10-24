@@ -1,0 +1,72 @@
+<?php
+declare(strict_types=1);
+
+// LifeStats SDK utility registration
+
+require_once __DIR__ . '/../core/UtilityType.php';
+require_once __DIR__ . '/Clean.php';
+require_once __DIR__ . '/Done.php';
+require_once __DIR__ . '/MakeError.php';
+require_once __DIR__ . '/FeatureAdd.php';
+require_once __DIR__ . '/FeatureHook.php';
+require_once __DIR__ . '/FeatureInit.php';
+require_once __DIR__ . '/Fetcher.php';
+require_once __DIR__ . '/MakeFetchDef.php';
+require_once __DIR__ . '/MakeContext.php';
+require_once __DIR__ . '/MakeOptions.php';
+require_once __DIR__ . '/MakeRequest.php';
+require_once __DIR__ . '/MakeResponse.php';
+require_once __DIR__ . '/MakeResult.php';
+require_once __DIR__ . '/MakePoint.php';
+require_once __DIR__ . '/MakeSpec.php';
+require_once __DIR__ . '/MakeUrl.php';
+require_once __DIR__ . '/Param.php';
+require_once __DIR__ . '/PrepareAuth.php';
+require_once __DIR__ . '/PrepareBody.php';
+require_once __DIR__ . '/Graphql.php';
+require_once __DIR__ . '/PrepareHeaders.php';
+require_once __DIR__ . '/PrepareMethod.php';
+require_once __DIR__ . '/PrepareParams.php';
+require_once __DIR__ . '/PreparePath.php';
+require_once __DIR__ . '/PrepareQuery.php';
+require_once __DIR__ . '/ResultBasic.php';
+require_once __DIR__ . '/ResultBody.php';
+require_once __DIR__ . '/ResultHeaders.php';
+require_once __DIR__ . '/TransformRequest.php';
+require_once __DIR__ . '/TransformResponse.php';
+
+LifeStatsUtility::setRegistrar(function (LifeStatsUtility $u): void {
+    $u->clean = [LifeStatsClean::class, 'call'];
+    $u->clean_add = [LifeStatsClean::class, 'add'];
+    $u->clean_explain = [LifeStatsDone::class, 'clean_explain'];
+    $u->done = [LifeStatsDone::class, 'call'];
+    $u->make_error = [LifeStatsMakeError::class, 'call'];
+    $u->feature_add = [LifeStatsFeatureAdd::class, 'call'];
+    $u->feature_hook = [LifeStatsFeatureHook::class, 'call'];
+    $u->feature_init = [LifeStatsFeatureInit::class, 'call'];
+    $u->fetcher = [LifeStatsFetcher::class, 'call'];
+    $u->make_fetch_def = [LifeStatsMakeFetchDef::class, 'call'];
+    $u->make_context = [LifeStatsMakeContext::class, 'call'];
+    $u->make_options = [LifeStatsMakeOptions::class, 'call'];
+    $u->make_request = [LifeStatsMakeRequest::class, 'call'];
+    $u->make_response = [LifeStatsMakeResponse::class, 'call'];
+    $u->make_result = [LifeStatsMakeResult::class, 'call'];
+    $u->make_point = [LifeStatsMakePoint::class, 'call'];
+    $u->make_spec = [LifeStatsMakeSpec::class, 'call'];
+    $u->make_url = [LifeStatsMakeUrl::class, 'call'];
+    $u->param = [LifeStatsParam::class, 'call'];
+    $u->prepare_auth = [LifeStatsPrepareAuth::class, 'call'];
+    $u->prepare_body = [LifeStatsPrepareBody::class, 'call'];
+    $u->prepare_headers = [LifeStatsPrepareHeaders::class, 'call'];
+    $u->prepare_method = [LifeStatsPrepareMethod::class, 'call'];
+    $u->prepare_params = [LifeStatsPrepareParams::class, 'call'];
+    $u->prepare_path = [LifeStatsPreparePath::class, 'call'];
+    $u->prepare_query = [LifeStatsPrepareQuery::class, 'call'];
+    $u->graphql_body = [LifeStatsGraphql::class, 'body'];
+    $u->graphql_errors = [LifeStatsGraphql::class, 'errors'];
+    $u->result_basic = [LifeStatsResultBasic::class, 'call'];
+    $u->result_body = [LifeStatsResultBody::class, 'call'];
+    $u->result_headers = [LifeStatsResultHeaders::class, 'call'];
+    $u->transform_request = [LifeStatsTransformRequest::class, 'call'];
+    $u->transform_response = [LifeStatsTransformResponse::class, 'call'];
+});

@@ -1,0 +1,681 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Life Stats",
+    "version": "1.0.0",
+    "description": "Playful statistics of a life from a birth date, from the api.tasta.space hub: seconds lived (leap seconds included), full moons seen, age on every planet, kilometres travelled around the Sun and the galaxy, estimated heartbeats and breaths, and the milestones still ahead (gigaseconds, 10,000-day birthdays, planet birthdays). GET only, JSON in a {\"data\": ..., \"meta\": ...} envelope, no key needed (anonymous callers get 30 requests a minute and 1,000 a day per IP, shared across every API on the hub). The API says it stores nothing: the date is used for the request and forgotten.\n\nSources: the documentation page https://api.tasta.space/life and the hub rules at https://api.tasta.space/docs, with both JSON endpoints probed live on 2026-10-23 (born only; born + time + tz; milestones with count=5 and the default 10; a future birth date giving 422).\n\nNot modelled: format=text on /life (one plain-text line) and /life/certificate, which returns an SVG or PNG certificate rather than JSON. All numbers are counted at request time, so they change from one call to the next."
+  },
+  "externalDocs": {
+    "description": "Life stats on api.tasta.space",
+    "url": "https://api.tasta.space/life"
+  },
+  "servers": [
+    {
+      "url": "https://api.tasta.space/v1"
+    }
+  ],
+  "paths": {
+    "/life": {
+      "get": {
+        "operationId": "getLife",
+        "summary": "Every life stat for a birth date",
+        "description": "Every stat counted as of now, plus the next three milestones. meta carries the moment of counting, the time zone, notes on every approximation, the rates behind the estimates and a source for each number.",
+        "parameters": [
+          {
+            "name": "born",
+            "in": "query",
+            "required": true,
+            "description": "Birth date, YYYY-MM-DD, from 1900-01-01 to today.",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "example": "1994-03-12"
+          },
+          {
+            "name": "time",
+            "in": "query",
+            "required": false,
+            "description": "Birth time, HH:MM on a 24-hour clock. Without it the count starts at midnight.",
+            "schema": {
+              "type": "string",
+              "pattern": "^([01][0-9]|2[0-3]):[0-5][0-9]$"
+            },
+            "example": "07:45"
+          },
+          {
+            "name": "tz",
+            "in": "query",
+            "required": false,
+            "description": "IANA time zone of the birth and of \"today\".",
+            "schema": {
+              "type": "string",
+              "default": "Europe/Bucharest"
+            },
+            "example": "America/New_York"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The stats.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Life"
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "as_of": {
+                          "type": "string",
+                          "description": "The moment of counting, ISO 8601 with offset, in the time zone used.",
+                          "format": "date-time",
+                          "example": "2026-10-23T21:34:49+03:00"
+                        },
+                        "timezone": {
+                          "type": "string",
+                          "description": "IANA time zone used.",
+                          "example": "Europe/Bucharest"
+                        },
+                        "time_assumed": {
+                          "type": "string",
+                          "description": "Present only when no time was given.",
+                          "example": "00:00, no time given"
+                        },
+                        "notes": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          },
+                          "description": "Notes on each approximation, keyed by field (seconds, full_moons_seen, estimates, age_on)."
+                        },
+                        "assumptions": {
+                          "type": "object",
+                          "description": "The rates and constants behind the numbers.",
+                          "properties": {
+                            "heart_rate_bpm": {
+                              "type": "number",
+                              "example": 75
+                            },
+                            "breaths_per_minute": {
+                              "type": "number",
+                              "example": 15
+                            },
+                            "earth_orbital_speed_km_s": {
+                              "type": "number",
+                              "example": 29.78
+                            },
+                            "sun_galactic_speed_km_s": {
+                              "type": "number",
+                              "example": 230
+                            },
+                            "synodic_month_days": {
+                              "type": "number",
+                              "example": 29.530588861
+                            },
+                            "orbital_periods_days": {
+                              "type": "object",
+                              "description": "Sidereal orbital period of each planet in Earth days.",
+                              "properties": {
+                                "mercury": {
+                                  "type": "number"
+                                },
+                                "venus": {
+                                  "type": "number"
+                                },
+                                "mars": {
+                                  "type": "number"
+                                },
+                                "jupiter": {
+                                  "type": "number"
+                                },
+                                "saturn": {
+                                  "type": "number"
+                                },
+                                "uranus": {
+                                  "type": "number"
+                                },
+                                "neptune": {
+                                  "type": "number"
+                                },
+                                "pluto": {
+                                  "type": "number"
+                                }
+                              },
+                              "required": [
+                                "mercury",
+                                "venus",
+                                "mars",
+                                "jupiter",
+                                "saturn",
+                                "uranus",
+                                "neptune",
+                                "pluto"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "heart_rate_bpm",
+                            "breaths_per_minute",
+                            "earth_orbital_speed_km_s",
+                            "sun_galactic_speed_km_s",
+                            "synodic_month_days",
+                            "orbital_periods_days"
+                          ]
+                        },
+                        "sources": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          },
+                          "description": "A source (usually a URL) for each constant, keyed by name (orbital_periods, earth_orbital_speed, sun_galactic_speed, heart_rate, breathing_rate, leap_seconds, full_moons)."
+                        },
+                        "links": {
+                          "type": "object",
+                          "properties": {
+                            "milestones": {
+                              "type": "string",
+                              "example": "https://api.tasta.space/v1/life/milestones?born=1994-03-12"
+                            },
+                            "certificate": {
+                              "type": "string",
+                              "description": "Link to the gigasecond certificate (SVG, not JSON).",
+                              "example": "https://api.tasta.space/v1/life/certificate?born=1994-03-12&milestone=gigasecond"
+                            }
+                          },
+                          "required": [
+                            "milestones",
+                            "certificate"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "as_of",
+                        "timezone",
+                        "notes",
+                        "assumptions",
+                        "sources",
+                        "links"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "meta"
+                  ]
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "invalid_parameter: no born, a date that is not a date, a birth before 1900-01-01 or in the future, a bad time or tz.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Anonymous limit reached (30 a minute, 1,000 a day per IP across the whole api.tasta.space hub); see Retry-After.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/life/milestones": {
+      "get": {
+        "operationId": "listMilestones",
+        "summary": "Milestones still ahead",
+        "description": "The milestones still ahead, soonest first, each with its date, the days until it and a certificate link.",
+        "parameters": [
+          {
+            "name": "born",
+            "in": "query",
+            "required": true,
+            "description": "Birth date, YYYY-MM-DD, from 1900-01-01 to today.",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "example": "1994-03-12"
+          },
+          {
+            "name": "time",
+            "in": "query",
+            "required": false,
+            "description": "Birth time, HH:MM on a 24-hour clock. Without it the count starts at midnight.",
+            "schema": {
+              "type": "string",
+              "pattern": "^([01][0-9]|2[0-3]):[0-5][0-9]$"
+            },
+            "example": "07:45"
+          },
+          {
+            "name": "tz",
+            "in": "query",
+            "required": false,
+            "description": "IANA time zone of the birth and of \"today\".",
+            "schema": {
+              "type": "string",
+              "default": "Europe/Bucharest"
+            },
+            "example": "America/New_York"
+          },
+          {
+            "name": "count",
+            "in": "query",
+            "required": false,
+            "description": "How many milestones, 1 to 20.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 20,
+              "default": 10
+            },
+            "example": 5
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The milestones.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Milestone"
+                      }
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "as_of": {
+                          "type": "string",
+                          "description": "The moment of counting.",
+                          "format": "date-time",
+                          "example": "2026-10-23T21:34:58+03:00"
+                        },
+                        "timezone": {
+                          "type": "string",
+                          "description": "IANA time zone used.",
+                          "example": "Europe/Bucharest"
+                        },
+                        "time_assumed": {
+                          "type": "string",
+                          "description": "Present only when no time was given.",
+                          "example": "00:00, no time given"
+                        },
+                        "count": {
+                          "type": "integer",
+                          "description": "How many milestones were asked for.",
+                          "example": 10
+                        },
+                        "ids": {
+                          "type": "string",
+                          "description": "The milestone ids, in words.",
+                          "example": "Fixed: gigasecond, 2-gigaseconds, 3-gigaseconds, 10000-days, 15000-days, 20000-days, 25000-days, 30000-days, billion-heartbeats. Planets: <planet>-<age>, like mars-18."
+                        },
+                        "notes": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          },
+                          "description": "Notes keyed by milestone kind (billion-heartbeats, planets)."
+                        }
+                      },
+                      "required": [
+                        "as_of",
+                        "timezone",
+                        "count",
+                        "ids",
+                        "notes"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "meta"
+                  ]
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "invalid_parameter: no born, a date that is not a date, a birth before 1900-01-01 or in the future, a bad time or tz.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Anonymous limit reached (30 a minute, 1,000 a day per IP across the whole api.tasta.space hub); see Retry-After.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Life": {
+        "type": "object",
+        "description": "Life statistics for one birth date, counted as of the moment of the request.",
+        "properties": {
+          "born": {
+            "type": "string",
+            "description": "The birth date as given.",
+            "format": "date",
+            "example": "1994-03-12"
+          },
+          "time": {
+            "type": "string",
+            "description": "The birth time as given (HH:MM). Present only when the time parameter was sent.",
+            "example": "07:45"
+          },
+          "weekday": {
+            "type": "string",
+            "description": "Weekday of the birth, in English.",
+            "example": "Saturday"
+          },
+          "age": {
+            "type": "object",
+            "description": "Calendar age in years, months and days.",
+            "properties": {
+              "years": {
+                "type": "integer",
+                "example": 32
+              },
+              "months": {
+                "type": "integer",
+                "example": 7
+              },
+              "days": {
+                "type": "integer",
+                "example": 11
+              }
+            },
+            "required": [
+              "years",
+              "months",
+              "days"
+            ]
+          },
+          "days": {
+            "type": "integer",
+            "description": "Days alive.",
+            "example": 11913
+          },
+          "seconds": {
+            "type": "integer",
+            "description": "Seconds alive, leap seconds included.",
+            "example": 1029357139
+          },
+          "leap_seconds_lived": {
+            "type": "integer",
+            "description": "Leap seconds lived through (27 were inserted from 1972 to 2016).",
+            "example": 9
+          },
+          "gigasecond": {
+            "type": "object",
+            "description": "The billionth second.",
+            "properties": {
+              "date": {
+                "type": "string",
+                "description": "Date of the billionth second.",
+                "format": "date",
+                "example": "2025-11-18"
+              },
+              "passed": {
+                "type": "boolean",
+                "description": "Whether it is already behind.",
+                "example": true
+              },
+              "days_until": {
+                "type": "integer",
+                "description": "Days until it (negative once passed).",
+                "example": -339
+              }
+            },
+            "required": [
+              "date",
+              "passed",
+              "days_until"
+            ]
+          },
+          "full_moons_seen": {
+            "type": "integer",
+            "description": "Mean full moons since birth (good to about one).",
+            "example": 403
+          },
+          "leap_days_lived": {
+            "type": "integer",
+            "description": "29 Februaries lived through.",
+            "example": 8
+          },
+          "friday_13ths_survived": {
+            "type": "integer",
+            "description": "Fridays the 13th lived through.",
+            "example": 56
+          },
+          "km_around_the_sun": {
+            "type": "integer",
+            "description": "Kilometres travelled around the Sun at Earth's mean orbital speed (29.78 km/s).",
+            "example": 30654255599
+          },
+          "km_around_the_galaxy": {
+            "type": "integer",
+            "description": "Kilometres travelled around the galaxy at 230 km/s.",
+            "example": 236752141970
+          },
+          "heartbeats_estimate": {
+            "type": "integer",
+            "description": "Estimate at a steady 75 beats a minute.",
+            "example": 1286696423
+          },
+          "breaths_estimate": {
+            "type": "integer",
+            "description": "Estimate at a steady 15 breaths a minute.",
+            "example": 257339284
+          },
+          "age_on": {
+            "type": "object",
+            "description": "Age on each planet, from NASA's sidereal years. Pluto counts.",
+            "properties": {
+              "mercury": {
+                "type": "number",
+                "description": "Age in Mercury years (days alive / sidereal year), two decimals.",
+                "example": 135.43
+              },
+              "venus": {
+                "type": "number",
+                "description": "Age in Venus years (days alive / sidereal year), two decimals."
+              },
+              "mars": {
+                "type": "number",
+                "description": "Age in Mars years (days alive / sidereal year), two decimals.",
+                "example": 17.34
+              },
+              "jupiter": {
+                "type": "number",
+                "description": "Age in Jupiter years (days alive / sidereal year), two decimals."
+              },
+              "saturn": {
+                "type": "number",
+                "description": "Age in Saturn years (days alive / sidereal year), two decimals."
+              },
+              "uranus": {
+                "type": "number",
+                "description": "Age in Uranus years (days alive / sidereal year), two decimals."
+              },
+              "neptune": {
+                "type": "number",
+                "description": "Age in Neptune years (days alive / sidereal year), two decimals."
+              },
+              "pluto": {
+                "type": "number",
+                "description": "Age in Pluto years (days alive / sidereal year), two decimals."
+              }
+            },
+            "required": [
+              "mercury",
+              "venus",
+              "mars",
+              "jupiter",
+              "saturn",
+              "uranus",
+              "neptune",
+              "pluto"
+            ]
+          },
+          "next_milestones": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Milestone"
+            },
+            "description": "The next three milestones, soonest first."
+          }
+        },
+        "required": [
+          "born",
+          "weekday",
+          "age",
+          "days",
+          "seconds",
+          "leap_seconds_lived",
+          "gigasecond",
+          "full_moons_seen",
+          "leap_days_lived",
+          "friday_13ths_survived",
+          "km_around_the_sun",
+          "km_around_the_galaxy",
+          "heartbeats_estimate",
+          "breaths_estimate",
+          "age_on",
+          "next_milestones"
+        ]
+      },
+      "Milestone": {
+        "type": "object",
+        "description": "A milestone of a life: a date when a round number of seconds, days, heartbeats or planet years is reached.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Milestone id, as the certificate endpoint takes it: gigasecond, 2-gigaseconds, 3-gigaseconds, 10000-days ... 30000-days, billion-heartbeats, or <planet>-<age>.",
+            "example": "mars-18"
+          },
+          "name": {
+            "type": "string",
+            "description": "Milestone name.",
+            "example": "18 on Mars"
+          },
+          "date": {
+            "type": "string",
+            "description": "Date of the milestone in the caller's time zone.",
+            "format": "date",
+            "example": "2028-01-18"
+          },
+          "days_until": {
+            "type": "integer",
+            "description": "Days from today to the milestone (negative once passed).",
+            "example": 452
+          },
+          "passed": {
+            "type": "boolean",
+            "description": "Whether the milestone is already behind.",
+            "example": false
+          },
+          "estimate": {
+            "type": "boolean",
+            "description": "True for estimated milestones (billion-heartbeats, at a steady 75 beats a minute).",
+            "example": false
+          },
+          "planet": {
+            "type": "string",
+            "description": "The planet, for planet-birthday milestones only.",
+            "enum": [
+              "mercury",
+              "venus",
+              "mars",
+              "jupiter",
+              "saturn",
+              "uranus",
+              "neptune",
+              "pluto"
+            ],
+            "example": "mars"
+          },
+          "age": {
+            "type": "integer",
+            "description": "The whole-number age on that planet, for planet-birthday milestones only.",
+            "example": 18
+          },
+          "certificate": {
+            "type": "string",
+            "description": "Link to an SVG certificate for this milestone (format=png for PNG). Not a JSON endpoint.",
+            "example": "https://api.tasta.space/v1/life/certificate?born=1994-03-12&milestone=mars-18"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "date",
+          "days_until",
+          "passed",
+          "estimate",
+          "certificate"
+        ]
+      },
+      "Error": {
+        "type": "object",
+        "description": "The hub's error envelope.",
+        "properties": {
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string",
+                "description": "Stable machine-readable code (the hub's codes plus this API's own).",
+                "example": "invalid_parameter"
+              },
+              "message": {
+                "type": "string",
+                "description": "Human-readable message; may be a joke.",
+                "example": "You have not been born yet. Come back once you have, we will keep counting."
+              }
+            },
+            "required": [
+              "code",
+              "message"
+            ]
+          }
+        },
+        "required": [
+          "error"
+        ]
+      }
+    }
+  }
+}

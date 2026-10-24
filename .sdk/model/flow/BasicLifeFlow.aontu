@@ -1,0 +1,28 @@
+# BasicLifeFlow
+
+main: kit: flow: BasicLifeFlow:
+{
+  entity: "life",
+  kind: "basic",
+  name: "BasicLifeFlow",
+  step: [
+    {
+      i: {
+        ref: "life_ref01",
+        srcdatavar: "life_ref01_data",
+        suffix: "_dt0"
+      }
+
+      o: "load",
+      v: [
+        {
+          apply: "TextFieldMark",
+          def: {
+            mark: "Mark01-life_ref01"
+          }
+        }
+      ]
+    }
+  ],
+  "key$": "BasicLifeFlow"
+}

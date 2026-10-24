@@ -1,0 +1,36 @@
+{
+  "existing": {
+    "life": {
+      "LIFE00": {
+        "data": {},
+        "meta": {},
+        "id": "LIFE00"
+      },
+      "LIFE01": {
+        "data": {},
+        "meta": {},
+        "id": "LIFE01"
+      },
+      "LIFE02": {
+        "data": {},
+        "meta": {},
+        "id": "LIFE02"
+      }
+    }
+  },
+  "new": {
+    "life": {
+      "life_ref01": {
+        "data": {},
+        "meta": {}
+      }
+    }
+  },
+  "requests": {
+    "GET /life": {
+      "provenance": "operation-contract",
+      "version": 2,
+      "source": "openapi3"
+    }
+  }
+}

@@ -1,0 +1,22 @@
+# BasicMilestoneFlow
+
+main: kit: flow: BasicMilestoneFlow:
+{
+  entity: "milestone",
+  kind: "basic",
+  name: "BasicMilestoneFlow",
+  step: [
+    {
+      o: "list",
+      v: [
+        {
+          apply: "ItemExists",
+          def: {
+            ref: "milestone_ref01"
+          }
+        }
+      ]
+    }
+  ],
+  "key$": "BasicMilestoneFlow"
+}
